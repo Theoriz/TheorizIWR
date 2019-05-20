@@ -17,12 +17,12 @@ int TextureHeight;
 [numthreads(8,8,1)]
 void Blender (uint3 id : SV_DispatchThreadID)
 {
-
 	//Result[id.xy] = InputTex0[id.xy] * MaskTexture[id.xy];
 
-	int tmp = TextureArray[MaskTexture[id.xy].r * TextureWidth * TextureHeight + id.x + id.y * TextureWidth];
-
-	Result[id.xy] = float4(tmp.r, tmp.g, tmp.b, 1);
-
+	int color = TextureArray[int(MaskTexture[id.xy].r * 200) * TextureWidth * TextureHeight + id.x + id.y * TextureWidth];
+	float r = (color & 255) / 255.0;
+	float g = ((color & 65280) >> 8) / 255.0;
+	float b = ((color & 16711680) >> 16) / 255.0;
+	Result[id.xy] = float4(r, g, b, 1.0);
 }
 

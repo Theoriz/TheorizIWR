@@ -34,7 +34,7 @@ public class TextureBlender : MonoBehaviour
 
 		//Fill texture array buffer
 		for(int i=0; i<inputTextures.Count; i++) {
-			computeBuffer.SetData(inputTextures[i].GetRawTextureData(), 0, textureSize.x * textureSize.y * i, textureSize.x * textureSize.y);
+			computeBuffer.SetData(TextureDataToIntArray(inputTextures[i]), 0, textureSize.x * textureSize.y * i, textureSize.x * textureSize.y);
 		}
 
 		//Get kernel
@@ -60,4 +60,18 @@ public class TextureBlender : MonoBehaviour
 		outputMaterial.SetTexture("_MainTex", outputTexture);
     }
 
+    int[] TextureDataToIntArray(Texture2D tex)
+    {
+        int[] intArray = new int[textureSize.y * textureSize.x];
+        byte[] raw = tex.GetRawTextureData();
+        for (int y = 0; y < textureSize.y; y++)
+        { 
+            for (int x = 0; x < textureSize.x; x++)
+            {
+                int index = (y * textureSize.x + x) * 3;
+                intArray[y * textureSize.x + x] = raw[index] + raw[index + 1] << 8 + raw[index + 2] << 16;
+            }
+        }
+        return intArray;
+    }
 }
