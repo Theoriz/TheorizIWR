@@ -9,6 +9,8 @@ public class TextureBlender : MonoBehaviour
 	public Material outputMaterial;
 	public Vector2Int textureSize;
 
+	public Texture2D maskTexture;
+
 	public List<Texture2D> inputTextures;
 
 	private RenderTexture outputTexture;
@@ -18,17 +20,19 @@ public class TextureBlender : MonoBehaviour
     void Start()
     {
 		
-		//
+		// Create output rendertexture
 		outputTexture = new RenderTexture(textureSize.x, textureSize.y, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.sRGB);
 		outputTexture.enableRandomWrite = true;
 		outputTexture.filterMode = FilterMode.Bilinear;
 		outputTexture.wrapMode = TextureWrapMode.Mirror;
 		outputTexture.Create();
 
-		blendKernel = computeShader.FindKernel("CSMain");
+		//Get kernel
+		blendKernel = computeShader.FindKernel("Blender");
 
+		//Bind textures
+		computeShader.SetTexture(blendKernel, "MaskTexture", maskTexture);
 		computeShader.SetTexture(blendKernel, "InputTex0", inputTextures[0]);
-
 		computeShader.SetTexture(blendKernel, "Result", outputTexture);
 	}
 
