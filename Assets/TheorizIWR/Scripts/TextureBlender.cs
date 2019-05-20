@@ -9,7 +9,7 @@ public class TextureBlender : MonoBehaviour
 	public Material outputMaterial;
 	public Vector2Int textureSize;
 
-	public Texture2D inputTexture0;
+	public List<Texture2D> inputTextures;
 
 	private RenderTexture outputTexture;
 	private int blendKernel;
@@ -26,7 +26,9 @@ public class TextureBlender : MonoBehaviour
 		outputTexture.Create();
 
 		blendKernel = computeShader.FindKernel("CSMain");
-		computeShader.SetTexture(blendKernel, "InputTex0", inputTexture0);
+
+		computeShader.SetTexture(blendKernel, "InputTex0", inputTextures[0]);
+
 		computeShader.SetTexture(blendKernel, "Result", outputTexture);
 	}
 
@@ -34,7 +36,7 @@ public class TextureBlender : MonoBehaviour
     void Update()
     {
 
-		computeShader.Dispatch(blendKernel, textureSize.x / 14, textureSize.y /14, 1);
+		computeShader.Dispatch(blendKernel, textureSize.x / 8, textureSize.y /8, 1);
 
 		outputMaterial.SetTexture("_MainTex", outputTexture);
     }
