@@ -9,11 +9,20 @@ Texture2D<float4> InputTex0;
 // with cs.SetTexture
 RWTexture2D<float4> Result;
 
+StructuredBuffer<int> TextureArray;
+
+int TextureWidth;
+int TextureHeight;
+
 [numthreads(8,8,1)]
 void Blender (uint3 id : SV_DispatchThreadID)
 {
 
-	Result[id.xy] = InputTex0[id.xy] * MaskTexture[id.xy];
+	//Result[id.xy] = InputTex0[id.xy] * MaskTexture[id.xy];
+
+	int tmp = TextureArray[MaskTexture[id.xy].r * TextureWidth * TextureHeight + id.x + id.y * TextureWidth];
+
+	Result[id.xy] = float4(tmp.r, tmp.g, tmp.b, 1);
 
 }
 

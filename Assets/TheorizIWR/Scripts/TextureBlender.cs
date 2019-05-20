@@ -16,24 +16,39 @@ public class TextureBlender : MonoBehaviour
 	private RenderTexture outputTexture;
 	private int blendKernel;
 
+	private ComputeBuffer computeBuffer;
+
     // Start is called before the first frame update
     void Start()
     {
 		
 		// Create output rendertexture
-		outputTexture = new RenderTexture(textureSize.x, textureSize.y, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.sRGB);
+		outputTexture = new RenderTexture(textureSize.x, textureSize.y, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
 		outputTexture.enableRandomWrite = true;
 		outputTexture.filterMode = FilterMode.Bilinear;
 		outputTexture.wrapMode = TextureWrapMode.Mirror;
 		outputTexture.Create();
 
+		//Create texture array buffer
+		computeBuffer = new ComputeBuffer(textureSize.x * textureSize.y * inputTextures.Count, 4);
+
+		//Fill texture array buffer
+		for(int i=0; i<inputTextures.Count; i++) {
+			computeBuffer.SetData(inputTextures[i].GetRawTextureData(), 0, textureSize.x * textureSize.y * i, textureSize.x * textureSize.y);
+		}
+
 		//Get kernel
 		blendKernel = computeShader.FindKernel("Blender");
 
-		//Bind textures
+		//Bind buffers and textures
+		computeShader.SetInt("TextureWidth", textureSize.x);
+		computeShader.SetInt("TextureHeight", textureSize.y);
+
+		computeShader.SetBuffer(blendKernel, "TextureArray", computeBuffer);
 		computeShader.SetTexture(blendKernel, "MaskTexture", maskTexture);
 		computeShader.SetTexture(blendKernel, "InputTex0", inputTextures[0]);
 		computeShader.SetTexture(blendKernel, "Result", outputTexture);
+
 	}
 
     // Update is called once per frame
@@ -44,6 +59,5 @@ public class TextureBlender : MonoBehaviour
 
 		outputMaterial.SetTexture("_MainTex", outputTexture);
     }
-
 
 }
