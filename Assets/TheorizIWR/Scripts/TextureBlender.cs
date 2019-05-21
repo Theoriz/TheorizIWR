@@ -8,8 +8,10 @@ public class TextureBlender : MonoBehaviour
 	public ComputeShader computeShader;
 	public Material outputMaterial;
 	public Vector2Int textureSize;
+    public int colorMode = 1;
+    public bool invertTime = false;
 
-	public RenderTexture maskTexture;
+    public RenderTexture maskTexture;
 
 	public List<Texture2D> inputTextures;
 
@@ -43,6 +45,8 @@ public class TextureBlender : MonoBehaviour
             //}
         }
 
+        computeShader.SetInt("ColorMode", colorMode);
+
         computeShader.Dispatch(blendKernel, textureSize.x / 8, textureSize.y /8, 1);
 
 		outputMaterial.SetTexture("_EmissionMap", outputTexture);
@@ -73,6 +77,7 @@ public class TextureBlender : MonoBehaviour
         computeShader.SetInt("TextureWidth", textureSize.x);
         computeShader.SetInt("TextureHeight", textureSize.y);
         computeShader.SetInt("TextureCount", inputTextures.Count);
+        computeShader.SetBool("InvertTime", invertTime);
 
         computeShader.SetBuffer(blendKernel, "TextureArray", computeBuffer);
         computeShader.SetTexture(blendKernel, "MaskTexture", maskTexture);
@@ -88,7 +93,7 @@ public class TextureBlender : MonoBehaviour
         int[] intArray = new int[textureSize.y * textureSize.x];
         byte[] raw = tex.GetRawTextureData();
         for (int y = 0; y < textureSize.y; y++)
-        { 
+        {
             for (int x = 0; x < textureSize.x; x++)
             {
                 int index = (y * textureSize.x + x) * 3;

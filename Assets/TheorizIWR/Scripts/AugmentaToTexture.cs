@@ -9,10 +9,9 @@ public class AugmentaToTexture : MonoBehaviour
 
 	public AugmentaAreaAnchor augmentaAreaAnchor;
 
-    public bool invertTime = false;
     public float evolutionRadius = 0.1f;
     public float innerRadius = 0.01f;
-    public float devolutionSpeed = 0.3f;
+    public float devolutionSpeed = 0.2f;
 
     public int maxPointsCount = 50;
 
@@ -93,7 +92,7 @@ public class AugmentaToTexture : MonoBehaviour
 		computeShader.SetInt("TextureWidth", maskTexture.width);
 		computeShader.SetInt("TextureHeight", maskTexture.height);
         computeShader.SetInt("TextureCount", textureBlender.inputTextures.Count);
-        computeShader.SetBool("InvertTime", invertTime);
+        computeShader.SetBool("InvertTime", textureBlender.invertTime);
         computeShader.SetFloat("EvolutionRadius", evolutionRadius);
         computeShader.SetFloat("InnerRadius", innerRadius);
         computeShader.SetFloat("DevolutionSpeed", devolutionSpeed);
