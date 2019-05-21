@@ -355,10 +355,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   computeShader: {fileID: 7200000, guid: d1f6e3f94a7ab3345b09d97e04d5b03e, type: 3}
   outputMaterial: {fileID: 2100000, guid: 7a77ae0f3b11d8b40949de5c1787bf2d, type: 2}
-  textureSize: {x: 1600, y: 1600}
-  maskTexture: {fileID: 2800000, guid: 2c29c08dd1c0b6749b7cd0fcff7a29fd, type: 3}
+  textureSize: {x: 2048, y: 2048}
+  maskTexture: {fileID: 2800000, guid: 8caa437b19957a045866b84c6218a0db, type: 3}
   inputTextures:
-  - {fileID: 2800000, guid: f50989dc542f82e48b0aa41f8ebd57ca, type: 3}
+  - {fileID: 2800000, guid: 64bac96276283b647b33e3ac69f9e3c1, type: 3}
+  - {fileID: 2800000, guid: 3c4e38b9878cdf247aaa9b5526ced5f2, type: 3}
+  - {fileID: 2800000, guid: d55bd1eb70ba18e4894e3848c574f4f5, type: 3}
+  - {fileID: 2800000, guid: 5b49d3b2ecb6b7449ae0bd9af0fdaa19, type: 3}
+  - {fileID: 2800000, guid: e5e21bab6b1ba7b489287342db5a6ad9, type: 3}
+  - {fileID: 2800000, guid: d97e3f808d19a9549b3b29f3ca1d5fb5, type: 3}
+  - {fileID: 2800000, guid: 54e4c7830fd21d24ca4ef0802ec2787f, type: 3}
+  - {fileID: 2800000, guid: e0dd6edb99c9e5341a1a8112c426b15b, type: 3}
+  - {fileID: 2800000, guid: 876e9654720e0694aa6597fd8a04c4b0, type: 3}
+  - {fileID: 2800000, guid: b7b3bdbabc9237845a91a09fcf0d6bbd, type: 3}
 --- !u!4 &1660962570
 Transform:
   m_ObjectHideFlags: 0
