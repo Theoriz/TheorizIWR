@@ -9,8 +9,12 @@ public class AugmentaToTexture : MonoBehaviour
 
 	public AugmentaAreaAnchor augmentaAreaAnchor;
 
-	public float radius = 1;
-	public int maxPointsCount = 50;
+    public bool invertTime = false;
+    public float evolutionRadius = 0.1f;
+    public float innerRadius = 0.01f;
+    public float devolutionSpeed = 0.3f;
+
+    public int maxPointsCount = 50;
 
 	public Vector3 rayCastDirection = Vector3.down;
 
@@ -52,9 +56,10 @@ public class AugmentaToTexture : MonoBehaviour
 		//Bind the augmenta points array
 		computeShader.SetBuffer(augmentaToTextureKernel, "AugmentaPoints", augmentaPointsBuffer);
 		computeShader.SetInt("PointsCount", augmentaAreaAnchor.InstantiatedObjects.Count);
+        computeShader.SetFloat("DeltaTime", Time.deltaTime);
 
-		//Run the kernel
-		computeShader.Dispatch(augmentaToTextureKernel, threadsConfiguration.x, threadsConfiguration.y, threadsConfiguration.z);
+        //Run the kernel
+        computeShader.Dispatch(augmentaToTextureKernel, threadsConfiguration.x, threadsConfiguration.y, threadsConfiguration.z);
 
     }
 
@@ -66,15 +71,17 @@ public class AugmentaToTexture : MonoBehaviour
 
 	void Initialize() {
 
-		// Create mask rendertexture
-		maskTexture = new RenderTexture((int)augmentaAreaAnchor.linkedAugmentaArea.AugmentaScene.Width, (int)augmentaAreaAnchor.linkedAugmentaArea.AugmentaScene.Height, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.sRGB);
-		maskTexture.enableRandomWrite = true;
+        // Create mask rendertexture
+        //maskTexture = new RenderTexture((int)augmentaAreaAnchor.linkedAugmentaArea.AugmentaScene.Width, (int)augmentaAreaAnchor.linkedAugmentaArea.AugmentaScene.Height, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.sRGB);
+        maskTexture = new RenderTexture((int)textureBlender.textureSize.x, (int)textureBlender.textureSize.y, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.sRGB);
+        maskTexture.enableRandomWrite = true;
 		maskTexture.filterMode = FilterMode.Bilinear;
 		maskTexture.wrapMode = TextureWrapMode.Mirror;
 		maskTexture.Create();
 
 		//Set the mask texture of textureblender
 		textureBlender.maskTexture = maskTexture;
+        textureBlender.Initialize();
 
 		//Create compute buffer
 		augmentaPointsBuffer = new ComputeBuffer(maxPointsCount, 4 * sizeof(float));
@@ -85,9 +92,14 @@ public class AugmentaToTexture : MonoBehaviour
 		//Bind texture size
 		computeShader.SetInt("TextureWidth", maskTexture.width);
 		computeShader.SetInt("TextureHeight", maskTexture.height);
+        computeShader.SetInt("TextureCount", textureBlender.inputTextures.Count);
+        computeShader.SetBool("InvertTime", invertTime);
+        computeShader.SetFloat("EvolutionRadius", evolutionRadius);
+        computeShader.SetFloat("InnerRadius", innerRadius);
+        computeShader.SetFloat("DevolutionSpeed", devolutionSpeed);
 
-		//Bind output texture
-		computeShader.SetTexture(augmentaToTextureKernel, "Result", maskTexture);
+        //Bind output texture
+        computeShader.SetTexture(augmentaToTextureKernel, "Result", maskTexture);
 
 		//Bind buffer
 		computeShader.SetBuffer(augmentaToTextureKernel, "AugmentaPoints", augmentaPointsBuffer);

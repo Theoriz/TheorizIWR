@@ -6,7 +6,12 @@ float Radius;
 int PointsCount;
 int TextureWidth;
 int TextureHeight;
-
+float TextureCount;
+bool InvertTime;
+float EvolutionRadius;
+float InnerRadius;
+float DevolutionSpeed;
+float DeltaTime;
 
 StructuredBuffer<float4> AugmentaPoints;
 
@@ -17,8 +22,7 @@ RWTexture2D<float4> Result;
 [numthreads(8,8,1)]
 void AugmentaToTexture(uint3 id : SV_DispatchThreadID)
 {
-
-	float4 color = float4(0, 0, 0, 1);
+	/*float4 color = float4(0, 0, 0, 1);
 	float dist;
 
 	for (int i = 0; i < PointsCount; i++) {
@@ -29,7 +33,35 @@ void AugmentaToTexture(uint3 id : SV_DispatchThreadID)
 			color += float4(1, 1, 1, 0);
 		}
 
-	}
+	}*/
+
+	float sqr_radius = EvolutionRadius * EvolutionRadius;
+	if (InvertTime) sqr_radius *= 1.5 * 1.5;
+	int maxTimepoint = TextureCount - 1;
+	float efxy = Result[id.xy]; //! ???
 	
-	Result[id.xy] = saturate(color);
+	float gauss_value;
+	float dist = 9e99;
+	for (int i = 0; i < PointsCount; i++) 
+	{
+		float sample_dist = distance(AugmentaPoints[i].xy, float2((float)id.x / (float)TextureWidth, (float)id.y / (float)TextureHeight));
+		if (sample_dist < dist) dist = sample_dist;
+	}
+
+	if (InnerRadius == 0.0) 
+	{
+		gauss_value = exp(-(dist * dist / sqr_radius));
+	}
+	else 
+	{
+		dist -= InnerRadius;
+		gauss_value = (dist < 0.0) ? 1.0 : exp(-(dist * dist / sqr_radius));
+	}
+	efxy = max(gauss_value, efxy - min(DeltaTime, 0.050) * DevolutionSpeed * (0.333333 + 0.666667 * efxy));
+	if (efxy < 0.0) efxy = 0.0;
+	else if (efxy > 1.0) efxy = 1.0;
+	//efxy /= maxTimepoint;
+	
+	//Result[id.xy] = float4(dist, 0, 0, 1);
+	Result[id.xy] = float4(efxy, 0, 0, 1);
 }

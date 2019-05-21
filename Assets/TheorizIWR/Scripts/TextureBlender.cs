@@ -9,7 +9,7 @@ public class TextureBlender : MonoBehaviour
 	public Material outputMaterial;
 	public Vector2Int textureSize;
 
-	public Texture2D maskTexture;
+	public RenderTexture maskTexture;
 
 	public List<Texture2D> inputTextures;
 
@@ -18,45 +18,69 @@ public class TextureBlender : MonoBehaviour
 
 	private ComputeBuffer computeBuffer;
 
+    private bool initialized = false;
+
     // Start is called before the first frame update
     void Start()
     {
-		
-		// Create output rendertexture
-		outputTexture = new RenderTexture(textureSize.x, textureSize.y, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
-		outputTexture.enableRandomWrite = true;
-		outputTexture.filterMode = FilterMode.Bilinear;
-		outputTexture.wrapMode = TextureWrapMode.Mirror;
-		outputTexture.Create();
-
-		//Create texture array buffer
-		computeBuffer = new ComputeBuffer(textureSize.x * textureSize.y * inputTextures.Count, 4);
-
-		//Fill texture array buffer
-		for(int i=0; i<inputTextures.Count; i++) {
-			computeBuffer.SetData(Texture2DToIntArray(inputTextures[i]), 0, textureSize.x * textureSize.y * i, textureSize.x * textureSize.y);
-		}
-
-		//Get kernel
-		blendKernel = computeShader.FindKernel("Blender");
-
-		//Bind buffers and textures
-		computeShader.SetInt("TextureWidth", textureSize.x);
-		computeShader.SetInt("TextureHeight", textureSize.y);
-        computeShader.SetInt("TextureCount", inputTextures.Count);
-
-        computeShader.SetBuffer(blendKernel, "TextureArray", computeBuffer);
-		computeShader.SetTexture(blendKernel, "MaskTexture", maskTexture);
-		computeShader.SetTexture(blendKernel, "Result", outputTexture);
-
+        initialized = false;
+        maskTexture = null;
 	}
 
     // Update is called once per frame
     void Update()
     {
-		computeShader.Dispatch(blendKernel, textureSize.x / 8, textureSize.y /8, 1);
+        if (!initialized)
+        {
+            return;
+            //if (!maskTexture)
+            //{
+            //    Initialize();
+            //}
+            //else
+            //{
+            //    return;
+            //}
+        }
+
+        computeShader.Dispatch(blendKernel, textureSize.x / 8, textureSize.y /8, 1);
 
 		outputMaterial.SetTexture("_MainTex", outputTexture);
+    }
+
+    public void Initialize()
+    {
+        // Create output rendertexture
+        outputTexture = new RenderTexture(textureSize.x, textureSize.y, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
+        outputTexture.enableRandomWrite = true;
+        outputTexture.filterMode = FilterMode.Bilinear;
+        outputTexture.wrapMode = TextureWrapMode.Mirror;
+        outputTexture.Create();
+
+        //Create texture array buffer
+        computeBuffer = new ComputeBuffer(textureSize.x * textureSize.y * inputTextures.Count, 4);
+
+        //Fill texture array buffer
+        for (int i = 0; i < inputTextures.Count; i++)
+        {
+            computeBuffer.SetData(Texture2DToIntArray(inputTextures[i]), 0, textureSize.x * textureSize.y * i, textureSize.x * textureSize.y);
+        }
+
+        //Get kernel
+        blendKernel = computeShader.FindKernel("Blender");
+
+        //Bind buffers and textures
+        computeShader.SetInt("TextureWidth", textureSize.x);
+        computeShader.SetInt("TextureHeight", textureSize.y);
+        computeShader.SetInt("TextureCount", inputTextures.Count);
+
+        computeShader.SetBuffer(blendKernel, "TextureArray", computeBuffer);
+        computeShader.SetTexture(blendKernel, "MaskTexture", maskTexture);
+        computeShader.SetTexture(blendKernel, "Result", outputTexture);
+
+        //Debug.Log("initialized " + gameObject.name);
+
+        initialized = true;
     }
 
     int[] Texture2DToIntArray(Texture2D tex)

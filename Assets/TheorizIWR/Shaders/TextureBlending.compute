@@ -20,7 +20,7 @@ void Blender (uint3 id : SV_DispatchThreadID)
 	float r = (color & 255) / 255.0;
 	float g = ((color & 65280) >> 8) / 255.0;
 	float b = ((color & 16711680) >> 16) / 255.0;
-	//r = g = b = MaskTexture[id.xy].a; //! debug
+	//!r = g = b = MaskTexture[id.xy].r; //! debug
 	Result[id.xy] = float4(r, g, b, 1.0);
 }
 
