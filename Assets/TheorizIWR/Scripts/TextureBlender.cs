@@ -45,7 +45,7 @@ public class TextureBlender : MonoBehaviour
 
         computeShader.Dispatch(blendKernel, textureSize.x / 8, textureSize.y /8, 1);
 
-		outputMaterial.SetTexture("_MainTex", outputTexture);
+		outputMaterial.SetTexture("_EmissionMap", outputTexture);
     }
 
     public void Initialize()
