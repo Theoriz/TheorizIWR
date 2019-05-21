@@ -116,15 +116,19 @@ public class AugmentaToTexture : MonoBehaviour
 
 	void UpdateAugmentaPoints() {
 
-		for (int i = 0; i < augmentaAreaAnchor.InstantiatedObjects.Count; i++) {
+        int i = 0;
+        //for (int i = 0; i < augmentaAreaAnchor.InstantiatedObjects.Count; i++) {
+        foreach (var element in augmentaAreaAnchor.InstantiatedObjects) { 
 
-			Physics.Raycast(augmentaAreaAnchor.InstantiatedObjects[i].transform.position, rayCastDirection, out hit, 5);
+            Physics.Raycast(element.Value.transform.position, rayCastDirection, out hit, 5);
 
 			augmentaPoints[i].x = hit.textureCoord.x;
 			augmentaPoints[i].y = hit.textureCoord.y;
 			augmentaPoints[i].z = 0;
 			augmentaPoints[i].w = 0;
 			//Debug.Log("Augmenta person " + i + ": " + augmentaPoints[i]);
+
+            i++;
 		}
 
 		augmentaPointsBuffer.SetData(augmentaPoints);
