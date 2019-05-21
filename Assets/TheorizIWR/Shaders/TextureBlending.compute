@@ -3,8 +3,6 @@
 
 Texture2D<float4> MaskTexture;
 
-Texture2D<float4> InputTex0;
-
 // Create a RenderTexture with enableRandomWrite flag and set it
 // with cs.SetTexture
 RWTexture2D<float4> Result;
@@ -13,16 +11,16 @@ StructuredBuffer<int> TextureArray;
 
 int TextureWidth;
 int TextureHeight;
+int TextureCount;
 
 [numthreads(8,8,1)]
 void Blender (uint3 id : SV_DispatchThreadID)
 {
-	//Result[id.xy] = InputTex0[id.xy] * MaskTexture[id.xy];
-
-	int color = TextureArray[int(MaskTexture[id.xy].r * 200) * TextureWidth * TextureHeight + id.x + id.y * TextureWidth];
+	int color = TextureArray[int(MaskTexture[id.xy].r * (float(TextureCount) - 0.0001)) * TextureWidth * TextureHeight + id.y * TextureWidth + id.x];
 	float r = (color & 255) / 255.0;
 	float g = ((color & 65280) >> 8) / 255.0;
 	float b = ((color & 16711680) >> 16) / 255.0;
+	//r = g = b = MaskTexture[id.xy].a; //! debug
 	Result[id.xy] = float4(r, g, b, 1.0);
 }
 

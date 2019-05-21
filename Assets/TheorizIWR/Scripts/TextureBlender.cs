@@ -34,7 +34,7 @@ public class TextureBlender : MonoBehaviour
 
 		//Fill texture array buffer
 		for(int i=0; i<inputTextures.Count; i++) {
-			computeBuffer.SetData(TextureDataToIntArray(inputTextures[i]), 0, textureSize.x * textureSize.y * i, textureSize.x * textureSize.y);
+			computeBuffer.SetData(Texture2DToIntArray(inputTextures[i]), 0, textureSize.x * textureSize.y * i, textureSize.x * textureSize.y);
 		}
 
 		//Get kernel
@@ -43,10 +43,10 @@ public class TextureBlender : MonoBehaviour
 		//Bind buffers and textures
 		computeShader.SetInt("TextureWidth", textureSize.x);
 		computeShader.SetInt("TextureHeight", textureSize.y);
+        computeShader.SetInt("TextureCount", inputTextures.Count);
 
-		computeShader.SetBuffer(blendKernel, "TextureArray", computeBuffer);
+        computeShader.SetBuffer(blendKernel, "TextureArray", computeBuffer);
 		computeShader.SetTexture(blendKernel, "MaskTexture", maskTexture);
-		computeShader.SetTexture(blendKernel, "InputTex0", inputTextures[0]);
 		computeShader.SetTexture(blendKernel, "Result", outputTexture);
 
 	}
@@ -54,13 +54,12 @@ public class TextureBlender : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
 		computeShader.Dispatch(blendKernel, textureSize.x / 8, textureSize.y /8, 1);
 
 		outputMaterial.SetTexture("_MainTex", outputTexture);
     }
 
-    int[] TextureDataToIntArray(Texture2D tex)
+    int[] Texture2DToIntArray(Texture2D tex)
     {
         int[] intArray = new int[textureSize.y * textureSize.x];
         byte[] raw = tex.GetRawTextureData();
@@ -69,7 +68,7 @@ public class TextureBlender : MonoBehaviour
             for (int x = 0; x < textureSize.x; x++)
             {
                 int index = (y * textureSize.x + x) * 3;
-                intArray[y * textureSize.x + x] = raw[index] + raw[index + 1] << 8 + raw[index + 2] << 16;
+                intArray[y * textureSize.x + x] = raw[index] + (raw[index + 1] << 8) + (raw[index + 2] << 16);
             }
         }
         return intArray;
