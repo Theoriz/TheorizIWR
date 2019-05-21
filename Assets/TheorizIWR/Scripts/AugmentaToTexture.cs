@@ -12,12 +12,21 @@ public class AugmentaToTexture : MonoBehaviour
 	public float radius = 1;
 	public int maxPointsCount = 50;
 
-	private RenderTexture maskTexture;
+	public Vector3 rayCastDirection = Vector3.down;
+
+	public TextureBlender textureBlender;
+
+	public RenderTexture maskTexture;
 	private int augmentaToTextureKernel;
 
 	private Vector4[] augmentaPoints;
 
 	private bool initialized = false;
+	private RaycastHit hit;
+
+	private Vector3Int threadsConfiguration;
+
+	private ComputeBuffer augmentaPointsBuffer;
 
     // Start is called before the first frame update
     void Start()
@@ -38,36 +47,74 @@ public class AugmentaToTexture : MonoBehaviour
 
 
 		//Update the augmentaPoints array
-		for(int i=0; i<augmentaAreaAnchor.InstantiatedObjects.Count; i++) {
-
-			augmentaPoints[i].x = augmentaArea.AugmentaPeople[augmentaAreaAnchor.InstantiatedObjects[i].Key].Position.x;
-			augmentaPoints[i].y = augmentaArea.AugmentaPeople[i].Position.y;
-			augmentaPoints[i].z = augmentaArea.AugmentaPeople[i].boundingRect.width;
-			augmentaPoints[i].w = augmentaArea.AugmentaPeople[i].boundingRect.height;
-			Debug.Log("Augmenta person " + i + ": " + augmentaPoints[i]);
-		}
+		UpdateAugmentaPoints();
 
 		//Bind the augmenta points array
-		computeShader.SetVectorArray("AugmentaPoints", augmentaPoints);
-		computeShader.SetInt("PointsCount", augmentaArea.arrayPersonCount());
+		computeShader.SetBuffer(augmentaToTextureKernel, "AugmentaPoints", augmentaPointsBuffer);
+		computeShader.SetInt("PointsCount", augmentaAreaAnchor.InstantiatedObjects.Count);
+
+		//Run the kernel
+		computeShader.Dispatch(augmentaToTextureKernel, threadsConfiguration.x, threadsConfiguration.y, threadsConfiguration.z);
 
     }
+
+	private void OnDisable() {
+
+		//Release buffer
+		augmentaPointsBuffer.Release();
+	}
 
 	void Initialize() {
 
 		// Create mask rendertexture
-		maskTexture = new RenderTexture((int)augmentaArea.AugmentaScene.Width, (int)augmentaArea.AugmentaScene.Height, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.sRGB);
+		maskTexture = new RenderTexture((int)augmentaAreaAnchor.linkedAugmentaArea.AugmentaScene.Width, (int)augmentaAreaAnchor.linkedAugmentaArea.AugmentaScene.Height, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.sRGB);
 		maskTexture.enableRandomWrite = true;
 		maskTexture.filterMode = FilterMode.Bilinear;
 		maskTexture.wrapMode = TextureWrapMode.Mirror;
 		maskTexture.Create();
 
+		//Set the mask texture of textureblender
+		textureBlender.maskTexture = maskTexture;
+
+		//Create compute buffer
+		augmentaPointsBuffer = new ComputeBuffer(maxPointsCount, 4 * sizeof(float));
+
 		//Get kernel index
 		augmentaToTextureKernel = computeShader.FindKernel("AugmentaToTexture");
+
+		//Bind texture size
+		computeShader.SetInt("TextureWidth", maskTexture.width);
+		computeShader.SetInt("TextureHeight", maskTexture.height);
+
+		//Bind output texture
+		computeShader.SetTexture(augmentaToTextureKernel, "Result", maskTexture);
+
+		//Bind buffer
+		computeShader.SetBuffer(augmentaToTextureKernel, "AugmentaPoints", augmentaPointsBuffer);
 
 		//Create augmentaPoints vector
 		augmentaPoints = new Vector4[maxPointsCount];
 
+		threadsConfiguration.x = Mathf.CeilToInt(maskTexture.width / 8.0f);
+		threadsConfiguration.y = Mathf.CeilToInt(maskTexture.height / 8.0f);
+		threadsConfiguration.z = 1;
+
 		initialized = true;
+	}
+
+	void UpdateAugmentaPoints() {
+
+		for (int i = 0; i < augmentaAreaAnchor.InstantiatedObjects.Count; i++) {
+
+			Physics.Raycast(augmentaAreaAnchor.InstantiatedObjects[i].transform.position, rayCastDirection, out hit, 5);
+
+			augmentaPoints[i].x = hit.textureCoord.x;
+			augmentaPoints[i].y = hit.textureCoord.y;
+			augmentaPoints[i].z = 0;
+			augmentaPoints[i].w = 0;
+			//Debug.Log("Augmenta person " + i + ": " + augmentaPoints[i]);
+		}
+
+		augmentaPointsBuffer.SetData(augmentaPoints);
 	}
 }

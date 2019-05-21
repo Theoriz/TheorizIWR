@@ -418,16 +418,16 @@ Transform:
   m_Father: {fileID: 1595007453}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
---- !u!114 &1331502110 stripped
+--- !u!114 &1157303460 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 114562361110998660, guid: b3f2d699d79866a4bb88ddb58e67d193,
+  m_CorrespondingSourceObject: {fileID: 114784919723292498, guid: 915af05f794565e44897c1de5f8dd2a8,
     type: 3}
-  m_PrefabInstance: {fileID: 240428502}
+  m_PrefabInstance: {fileID: 285707954}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3c5d064b252206c4faf00b5f22dae6b1, type: 3}
+  m_Script: {fileID: 11500000, guid: 362e7420a46399f47968d1dc0e41a483, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1595007452
@@ -822,9 +822,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   computeShader: {fileID: 7200000, guid: 8cf67ec0bde21744db2a2b7f7c82a711, type: 3}
-  augmentaArea: {fileID: 1331502110}
+  augmentaAreaAnchor: {fileID: 1157303460}
   radius: 1
   maxPointsCount: 50
+  rayCastDirection: {x: 0, y: -1, z: 0}
+  textureBlender: {fileID: 1660962569}
+  maskTexture: {fileID: 0}
 --- !u!4 &1848319830
 Transform:
   m_ObjectHideFlags: 0
@@ -925,7 +928,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1976470860}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.28, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

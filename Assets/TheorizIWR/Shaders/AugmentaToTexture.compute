@@ -4,6 +4,9 @@
 float Radius;
 
 int PointsCount;
+int TextureWidth;
+int TextureHeight;
+
 
 StructuredBuffer<float4> AugmentaPoints;
 
@@ -15,5 +18,18 @@ RWTexture2D<float4> Result;
 void AugmentaToTexture(uint3 id : SV_DispatchThreadID)
 {
 
-    Result[id.xy] = float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 0.0);
+	float4 color = float4(0, 0, 0, 1);
+	float dist;
+
+	for (int i = 0; i < PointsCount; i++) {
+
+		dist = distance(AugmentaPoints[i].xy, float2((float)id.x / (float)TextureWidth, (float)id.y / (float)TextureHeight));
+
+		if (dist < 0.1) {
+			color += float4(1, 1, 1, 0);
+		}
+
+	}
+	
+	Result[id.xy] = saturate(color);
 }
