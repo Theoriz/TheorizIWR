@@ -62,7 +62,15 @@ public class AugmentaToTexture : MonoBehaviour
 
     }
 
-	private void OnDisable() {
+    private void OnValidate()
+    {
+        computeShader.SetBool("InvertTime", textureBlender.invertTime);
+        computeShader.SetFloat("EvolutionRadius", evolutionRadius);
+        computeShader.SetFloat("InnerRadius", innerRadius);
+        computeShader.SetFloat("DevolutionSpeed", devolutionSpeed);
+    }
+
+    private void OnDisable() {
 
 		//Release buffer
 		augmentaPointsBuffer.Release();
