@@ -8,8 +8,8 @@ public class TextureBlender : MonoBehaviour
 	public ComputeShader computeShader;
 	public Material outputMaterial;
 	public Vector2Int textureSize;
-    public int colorMode = 1;
-    [Range(0,2)] public int textureSet = 0;
+    [Range(0, 3)] public int colorMode = 1;
+    [Range(0, 3)] public int textureSet = 0;
     public bool invertTime = false;
 
     public RenderTexture maskTexture;
@@ -17,6 +17,7 @@ public class TextureBlender : MonoBehaviour
 	public List<Texture2D> inputTextures0;
     public List<Texture2D> inputTextures1;
     public List<Texture2D> inputTextures2;
+    public List<Texture2D> inputTextures3;
 
     private RenderTexture outputTexture;
 	private int blendKernel;
@@ -87,6 +88,9 @@ public class TextureBlender : MonoBehaviour
             case 2:
                 inputTextures = inputTextures2;
                 break;
+            case 3:
+                inputTextures = inputTextures3;
+                break;
         }
 
         if (inputTextures.Count <= 0)
@@ -151,6 +155,8 @@ public class TextureBlender : MonoBehaviour
                 return inputTextures1.Count;
             case 2:
                 return inputTextures2.Count;
+            case 3:
+                return inputTextures3.Count;
             default:
                 return 0;
         }

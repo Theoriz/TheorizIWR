@@ -34,9 +34,18 @@ void Blender (uint3 id : SV_DispatchThreadID)
 		break;
 	case 2:
 		r = min(255.0, r + timestep * 0.35);
-		g = min(255.0, g - timestep * 0.3);
+		g = max(0.0, g - timestep * 0.3);
 		b = max(0.0, b - timestep * 0.1);
 		break;
+	case 3:
+		float step_factor = 1.0 - float(timestep) / TextureCount;
+		r = min(255.0, max(0.0, step_factor * (r / 1.0)
+			+ (1.0 - step_factor) * (b / 1.0)));
+		g = min(255.0, max(0.0, g - timestep * 0.3));
+		b = min(255.0, max(0.0, step_factor * (b / 1.0)
+			+ 0.5 * (1.0 - step_factor) * (r / 1.0)));
+		break;
+
 	}
 
 	Result[id.xy] = float4(r / 255.0, g / 255.0, b / 255.0, 1.0);
