@@ -36,6 +36,7 @@ public class AugmentaToTexture : MonoBehaviour
     void Start()
     {
 		initialized = false;
+        //computeShader = Instantiate(computeShader);
 	}
 
     // Update is called once per frame
@@ -135,7 +136,7 @@ public class AugmentaToTexture : MonoBehaviour
 
 			augmentaPoints[i].x = hit.textureCoord.x;
 			augmentaPoints[i].y = hit.textureCoord.y;
-			augmentaPoints[i].z = 0;
+			augmentaPoints[i].z = augmentaAreaAnchor.linkedAugmentaArea.AugmentaPeople[element.Key].age;
 			augmentaPoints[i].w = 0;
 			//Debug.Log("Augmenta person " + i + ": " + augmentaPoints[i]);
 

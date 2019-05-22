@@ -38,24 +38,30 @@ void AugmentaToTexture(uint3 id : SV_DispatchThreadID)
 	float sqr_radius = EvolutionRadius * EvolutionRadius;
 	if (InvertTime) sqr_radius *= 1.5 * 1.5;
 	int maxTimepoint = TextureCount - 1;
-	float efxy = Result[id.xy]; //! ???
+	float efxy = Result[id.xy].r; //! ???
 	
 	float gauss_value;
 	float dist = 9e99;
+	float time_factor = 1.0;
 	for (int i = 0; i < PointsCount; i++) 
 	{
 		float sample_dist = distance(AugmentaPoints[i].xy, float2((float)id.x / (float)TextureWidth, (float)id.y / (float)TextureHeight));
-		if (sample_dist < dist) dist = sample_dist;
+		if (sample_dist < dist)
+		{
+			dist = sample_dist;
+			time_factor = AugmentaPoints[i].z / 40.0;
+			if (time_factor > 1.0) time_factor = 1.0;
+		}
 	}
 
 	if (InnerRadius == 0.0) 
 	{
-		gauss_value = exp(-(dist * dist / sqr_radius));
+		gauss_value = exp(-(dist * dist / (sqr_radius * time_factor * time_factor)));
 	}
 	else 
 	{
-		dist -= InnerRadius;
-		gauss_value = (dist < 0.0) ? 1.0 : exp(-(dist * dist / sqr_radius));
+		dist -= InnerRadius * time_factor;
+		gauss_value = (dist < 0.0) ? 1.0 : exp(-(dist * dist / (sqr_radius * time_factor * time_factor)));
 	}
 	efxy = max(gauss_value, efxy - min(DeltaTime, 0.050) * DevolutionSpeed * (0.333333 + 0.666667 * efxy));
 	if (efxy < 0.0) efxy = 0.0;

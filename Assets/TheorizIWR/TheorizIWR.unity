@@ -285,7 +285,7 @@ MonoBehaviour:
   augmentaAreaAnchor: {fileID: 639599014}
   evolutionRadius: 0.075
   innerRadius: 0.013
-  devolutionSpeed: 2
+  devolutionSpeed: 0.3
   maxPointsCount: 50
   rayCastDirection: {x: 0, y: -1, z: 0}
   textureBlender: {fileID: 1660962569}
@@ -337,7 +337,7 @@ MonoBehaviour:
   outputMaterial: {fileID: 2100000, guid: 3a595469be9ded240845e4680ac7f6c7, type: 2}
   textureSize: {x: 1024, y: 1024}
   colorMode: 1
-  textureSet: 0
+  textureSet: 1
   invertTime: 0
   maskTexture: {fileID: 0}
   inputTextures0:
@@ -1356,11 +1356,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 223a0631c01696d4d846a98c34c50e7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  computeShader: {fileID: 7200000, guid: 98877e148706d1b46844830ab72bdb5a, type: 3}
+  computeShader: {fileID: 7200000, guid: 125e7111477e4f04aabd83cdb1bc1c8d, type: 3}
   augmentaAreaAnchor: {fileID: 1682271926}
   evolutionRadius: 0.075
   innerRadius: 0.013
-  devolutionSpeed: 2
+  devolutionSpeed: 0.3
   maxPointsCount: 50
   rayCastDirection: {x: -1, y: 0, z: 0}
   textureBlender: {fileID: 374273630}
@@ -1922,7 +1922,7 @@ MonoBehaviour:
   outputMaterial: {fileID: 2100000, guid: 7a77ae0f3b11d8b40949de5c1787bf2d, type: 2}
   textureSize: {x: 1024, y: 1024}
   colorMode: 1
-  textureSet: 0
+  textureSet: 1
   invertTime: 0
   maskTexture: {fileID: 0}
   inputTextures0:
@@ -2755,7 +2755,7 @@ MonoBehaviour:
   outputMaterial: {fileID: 2100000, guid: d96f32b49510ff643ac70bd5ba6d960d, type: 2}
   textureSize: {x: 1024, y: 1024}
   colorMode: 1
-  textureSet: 0
+  textureSet: 1
   invertTime: 0
   maskTexture: {fileID: 0}
   inputTextures0:
@@ -3418,11 +3418,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 223a0631c01696d4d846a98c34c50e7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  computeShader: {fileID: 7200000, guid: 31b515f85c9880b4185a2fbfec234e0f, type: 3}
+  computeShader: {fileID: 7200000, guid: 1a931512632693e49926c0b9bb33e754, type: 3}
   augmentaAreaAnchor: {fileID: 300299964}
   evolutionRadius: 0.075
   innerRadius: 0.013
-  devolutionSpeed: 2
+  devolutionSpeed: 0.3
   maxPointsCount: 50
   rayCastDirection: {x: 0, y: 0, z: -1}
   textureBlender: {fileID: 1805816011}

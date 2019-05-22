@@ -61,8 +61,19 @@ public class TextureBlender : MonoBehaviour
             Initialize();
     }
 
+    private void OnDisable()
+    {
+        computeBuffer.Release();
+    }
+
     public void Initialize()
     {
+        if(computeBuffer != null)
+        {
+            computeBuffer.Release();
+            computeBuffer = null;
+        }
+
         List<Texture2D> inputTextures = new List<Texture2D>();
 
         switch (textureSet)
