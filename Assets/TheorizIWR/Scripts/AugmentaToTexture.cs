@@ -20,6 +20,7 @@ public class AugmentaToTexture : MonoBehaviour
 	public TextureBlender textureBlender;
 
 	public RenderTexture maskTexture;
+
 	private int augmentaToTextureKernel;
 
 	private Vector4[] augmentaPoints;
@@ -99,7 +100,7 @@ public class AugmentaToTexture : MonoBehaviour
 		//Bind texture size
 		computeShader.SetInt("TextureWidth", maskTexture.width);
 		computeShader.SetInt("TextureHeight", maskTexture.height);
-        computeShader.SetInt("TextureCount", textureBlender.inputTextures.Count);
+        computeShader.SetInt("TextureCount", textureBlender.GetTextureCount());
         computeShader.SetBool("InvertTime", textureBlender.invertTime);
         computeShader.SetFloat("EvolutionRadius", evolutionRadius);
         computeShader.SetFloat("InnerRadius", innerRadius);

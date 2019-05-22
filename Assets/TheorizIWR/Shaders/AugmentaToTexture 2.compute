@@ -38,7 +38,7 @@ void AugmentaToTexture(uint3 id : SV_DispatchThreadID)
 	float sqr_radius = EvolutionRadius * EvolutionRadius;
 	if (InvertTime) sqr_radius *= 1.5 * 1.5;
 	int maxTimepoint = TextureCount - 1;
-	float efxy = Result[id.xy].r; //! ???
+	float efxy = Result[id.xy]; //! ???
 	
 	float gauss_value;
 	float dist = 9e99;

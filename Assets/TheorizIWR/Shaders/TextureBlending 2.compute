@@ -1,0 +1,44 @@
+﻿// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel Blender
+
+Texture2D<float4> MaskTexture;
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+RWTexture2D<float4> Result;
+
+StructuredBuffer<int> TextureArray;
+
+int TextureWidth;
+int TextureHeight;
+int TextureCount;
+int ColorMode;
+int InvertTime;
+
+[numthreads(8,8,1)]
+void Blender (uint3 id : SV_DispatchThreadID)
+{
+	int timestep = int(MaskTexture[id.xy].r * (float(TextureCount) - 0.0001));
+	if (InvertTime) timestep = TextureCount - 1 - timestep;
+	int color = TextureArray[timestep * TextureWidth * TextureHeight + id.y * TextureWidth + id.x];
+	float r = color & 255;
+	float g = (color & 65280) >> 8;
+	float b = (color & 16711680) >> 16;
+
+	switch (ColorMode)
+	{
+	case 0:
+		r = g = b = timestep * 255.0 / TextureCount;
+		break;
+	case 1:
+		break;
+	case 2:
+		r = min(255.0, r + timestep * 0.35);
+		g = min(255.0, g - timestep * 0.3);
+		b = max(0.0, b - timestep * 0.1);
+		break;
+	}
+
+	Result[id.xy] = float4(r / 255.0, g / 255.0, b / 255.0, 1.0);
+}
+

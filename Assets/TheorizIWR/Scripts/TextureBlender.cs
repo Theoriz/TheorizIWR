@@ -9,13 +9,16 @@ public class TextureBlender : MonoBehaviour
 	public Material outputMaterial;
 	public Vector2Int textureSize;
     public int colorMode = 1;
+    [Range(0,2)] public int textureSet = 0;
     public bool invertTime = false;
 
     public RenderTexture maskTexture;
 
-	public List<Texture2D> inputTextures;
+	public List<Texture2D> inputTextures0;
+    public List<Texture2D> inputTextures1;
+    public List<Texture2D> inputTextures2;
 
-	private RenderTexture outputTexture;
+    private RenderTexture outputTexture;
 	private int blendKernel;
 
 	private ComputeBuffer computeBuffer;
@@ -52,8 +55,31 @@ public class TextureBlender : MonoBehaviour
 		outputMaterial.SetTexture("_EmissionMap", outputTexture);
     }
 
+    private void OnValidate()
+    {
+        Initialize();
+    }
+
     public void Initialize()
     {
+        List<Texture2D> inputTextures = new List<Texture2D>();
+
+        switch (textureSet)
+        {
+            case 0:
+                inputTextures = inputTextures0;
+                break;
+            case 1:
+                inputTextures = inputTextures1;
+                break;
+            case 2:
+                inputTextures = inputTextures2;
+                break;
+        }
+
+        if (inputTextures.Count <= 0)
+            return;
+
         // Create output rendertexture
         outputTexture = new RenderTexture(textureSize.x, textureSize.y, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
         outputTexture.enableRandomWrite = true;
@@ -101,5 +127,20 @@ public class TextureBlender : MonoBehaviour
             }
         }
         return intArray;
+    }
+
+    public int GetTextureCount()
+    {
+        switch (textureSet)
+        {
+            case 0:
+                return inputTextures0.Count;
+            case 1:
+                return inputTextures1.Count;
+            case 2:
+                return inputTextures2.Count;
+            default:
+                return 0;
+        }
     }
 }
