@@ -57,7 +57,8 @@ public class TextureBlender : MonoBehaviour
 
     private void OnValidate()
     {
-        Initialize();
+        if(Application.isPlaying && initialized)
+            Initialize();
     }
 
     public void Initialize()

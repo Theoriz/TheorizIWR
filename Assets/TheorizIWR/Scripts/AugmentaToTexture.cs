@@ -65,10 +65,13 @@ public class AugmentaToTexture : MonoBehaviour
 
     private void OnValidate()
     {
-        computeShader.SetBool("InvertTime", textureBlender.invertTime);
-        computeShader.SetFloat("EvolutionRadius", evolutionRadius);
-        computeShader.SetFloat("InnerRadius", innerRadius);
-        computeShader.SetFloat("DevolutionSpeed", devolutionSpeed);
+        if (Application.isPlaying && initialized)
+        {
+            computeShader.SetBool("InvertTime", textureBlender.invertTime);
+            computeShader.SetFloat("EvolutionRadius", evolutionRadius);
+            computeShader.SetFloat("InnerRadius", innerRadius);
+            computeShader.SetFloat("DevolutionSpeed", devolutionSpeed);
+        }
     }
 
     private void OnDisable() {
